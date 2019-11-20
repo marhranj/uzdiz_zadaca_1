@@ -9,15 +9,21 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class ProvjeraParametara {
+public class UpravljacArgumentimaKmdLin {
+
+    private String[] argumentiKomandneLinije;
 
     private String datotekaEmisije;
     private String datotekaOsobe;
     private String datotekaTvKuca;
     private String datotekaUloge;
 
-    public boolean popuniNaizveDatotekaSaParametrima(String[] argumenti) {
-        Map<String, String> parametri = pretvoriUMapuParametarVrijednost(argumenti);
+    public UpravljacArgumentimaKmdLin(String[] argumentiKomandneLinije) {
+        this.argumentiKomandneLinije = argumentiKomandneLinije;
+    }
+
+    public boolean popuniNaizveDatoteka() {
+        Map<String, String> parametri = pretvoriUMapuParametarVrijednost(argumentiKomandneLinije);
         datotekaOsobe = parametri.get("o");
         datotekaEmisije = parametri.get("e");
         datotekaTvKuca = parametri.get("t");
