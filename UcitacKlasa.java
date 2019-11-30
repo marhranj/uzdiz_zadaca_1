@@ -1,20 +1,16 @@
 package marhranj_zadaca_1;
 
-import marhranj_zadaca_1.entiteti.Emisija;
-import marhranj_zadaca_1.entiteti.Osoba;
-import marhranj_zadaca_1.entiteti.Uloga;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class UcitavacKlasa {
+public class UcitacKlasa {
 
     private UpravljacDatotekama upravljacDatotekama;
 
-    public UcitavacKlasa(UpravljacDatotekama upravljacDatotekama) {
+    public UcitacKlasa(UpravljacDatotekama upravljacDatotekama) {
         this.upravljacDatotekama = upravljacDatotekama;
     }
 

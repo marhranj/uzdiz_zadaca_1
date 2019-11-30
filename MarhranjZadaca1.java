@@ -1,16 +1,6 @@
 package marhranj_zadaca_1;
 
-import marhranj_zadaca_1.entiteti.Emisija;
-import marhranj_zadaca_1.entiteti.Osoba;
-import marhranj_zadaca_1.entiteti.Uloga;
-
-import java.util.List;
-
 public class MarhranjZadaca1 {
-
-    private static List<Uloga> uloge;
-    private static List<Osoba> osobe;
-    private static List<Emisija> emisije;
 
     public static void main(String... args) {
         UpravljacArgumentimaKmdLin upravljacArgumentimaKmdLin = new UpravljacArgumentimaKmdLin(args);
@@ -23,27 +13,16 @@ public class MarhranjZadaca1 {
             System.err.println("Neispravni nazivi datoteka");
             System.exit(0);
         }
-        UcitavacKlasa ucitavacKlasa = new UcitavacKlasa(upravljacDatotekama);
-        ucitajKlase(ucitavacKlasa);
+        UcitacKlasa ucitacKlasa = new UcitacKlasa(upravljacDatotekama);
+        postaviZnacajkeTvKuce(ucitacKlasa);
         System.out.println("Bravo");
     }
 
-    private static void ucitajKlase(UcitavacKlasa ucitavacKlasa) {
-        uloge = ucitavacKlasa.ucitajUloge();
-        osobe = ucitavacKlasa.ucitajOsobe();
-        emisije = ucitavacKlasa.ucitajEmisije();
-    }
-
-    public static List<Uloga> getUloge() {
-        return uloge;
-    }
-
-    public static List<Osoba> getOsobe() {
-        return osobe;
-    }
-
-    public static List<Emisija> getEmisije() {
-        return emisije;
+    private static void postaviZnacajkeTvKuce(UcitacKlasa ucitacKlasa) {
+        TvKuca tvKuca = TvKuca.dajInstancu();
+        tvKuca.setUloge(ucitacKlasa.ucitajUloge());
+        tvKuca.setOsobe(ucitacKlasa.ucitajOsobe());
+        tvKuca.setEmisije(ucitacKlasa.ucitajEmisije());
     }
 
 }

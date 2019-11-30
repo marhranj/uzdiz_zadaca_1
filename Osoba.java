@@ -1,6 +1,4 @@
-package marhranj_zadaca_1.entiteti;
-
-import marhranj_zadaca_1.Prototype;
+package marhranj_zadaca_1;
 
 public class Osoba implements Prototype {
 
