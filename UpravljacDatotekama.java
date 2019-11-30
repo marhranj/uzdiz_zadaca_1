@@ -19,14 +19,18 @@ public class UpravljacDatotekama {
 
     public boolean ucitajDatoteke() {
         try {
-            datotekaEmisije = new String(Files.readAllBytes(Paths.get(upravljacArgumentimaKmdLin.getDatotekaEmisije())));
-            datotekaOsobe = new String(Files.readAllBytes(Paths.get(upravljacArgumentimaKmdLin.getDatotekaOsobe())));
-            datotekaTvKuca = new String(Files.readAllBytes(Paths.get(upravljacArgumentimaKmdLin.getDatotekaTvKuca())));
-            datotekaUloge = new String(Files.readAllBytes(Paths.get(upravljacArgumentimaKmdLin.getDatotekaUloge())));
+            datotekaEmisije = procitajDatoteku(upravljacArgumentimaKmdLin.getDatotekaEmisije());
+            datotekaOsobe = procitajDatoteku(upravljacArgumentimaKmdLin.getDatotekaOsobe());
+            datotekaTvKuca = procitajDatoteku(upravljacArgumentimaKmdLin.getDatotekaTvKuca());
+            datotekaUloge = procitajDatoteku(upravljacArgumentimaKmdLin.getDatotekaUloge());
         } catch (IOException e) {
             return false;
         }
         return true;
+    }
+
+    public String procitajDatoteku(String nazivDatoteke) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(nazivDatoteke)));
     }
 
     public String getDatotekaEmisije() {

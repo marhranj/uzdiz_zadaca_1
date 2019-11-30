@@ -28,7 +28,8 @@ public class UpravljacArgumentimaKmdLin {
         datotekaEmisije = parametri.get("e");
         datotekaTvKuca = parametri.get("t");
         datotekaUloge = parametri.get("u");
-        return Stream.of(datotekaOsobe, datotekaEmisije, datotekaTvKuca, datotekaUloge).allMatch(Objects::nonNull);
+        return Stream.of(datotekaOsobe, datotekaEmisije, datotekaTvKuca, datotekaUloge)
+                .allMatch(Objects::nonNull);
     }
 
     public String getDatotekaEmisije() {
