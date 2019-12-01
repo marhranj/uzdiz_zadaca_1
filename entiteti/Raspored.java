@@ -21,19 +21,6 @@ public class Raspored {
 
     }
 
-    private Dan dohvatiDanPremaIndexu(int index) {
-        index = index % 7;
-        switch (index) {
-            case 1: return ponedjeljak;
-            case 2: return utorak;
-            case 3: return srijeda;
-            case 4: return cetvrtak;
-            case 5: return petak;
-            case 6: return subota;
-            default: return nedjelja;
-        }
-    }
-
     public Dan getPonedjeljak() {
         return ponedjeljak;
     }
@@ -60,6 +47,19 @@ public class Raspored {
 
     public Dan getNedjelja() {
         return nedjelja;
+    }
+
+    private Dan dohvatiDanPremaIndexu(int index) {
+        index = index % 7;
+        switch (index) {
+            case 1: return ponedjeljak;
+            case 2: return utorak;
+            case 3: return srijeda;
+            case 4: return cetvrtak;
+            case 5: return petak;
+            case 6: return subota;
+            default: return nedjelja;
+        }
     }
 
 }

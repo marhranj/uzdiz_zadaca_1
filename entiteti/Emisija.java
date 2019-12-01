@@ -15,38 +15,24 @@ public class Emisija implements Prototype {
     private List<Osoba> osobe;
 
     public Emisija(Emisija emisija) {
-        this.id = emisija.id;
-        this.nazivEmisije = emisija.nazivEmisije;
-        this.trajanje = emisija.trajanje;
-        this.osobe = emisija.osobe;
+        if (emisija != null) {
+            this.id = emisija.id;
+            this.nazivEmisije = emisija.nazivEmisije;
+            this.trajanje = emisija.trajanje;
+            this.osobe = emisija.osobe;
+        }
     }
 
     public Emisija(String redDatotekeEmisije) throws IllegalArgumentException {
-        IllegalArgumentException exception = new IllegalArgumentException("Neispravan zapis u datoteci emisija: " + redDatotekeEmisije);
         String[] atributi = redDatotekeEmisije.split("\\s*;\\s*");
         if (atributi.length > 2) {
             try {
                 popuniAtribute(atributi);
             } catch (IllegalArgumentException e) {
-                throw exception;
+                throw new IllegalArgumentException("Neispravan zapis u datoteci emisija: " + redDatotekeEmisije, e);
             }
         } else {
-            throw exception;
-        }
-    }
-
-    private void popuniAtribute(String[] atributi) {
-        id = Integer.parseInt(atributi[0]);
-        nazivEmisije = atributi[1];
-        trajanje = Long.parseLong(atributi[2]);
-        if (atributi.length > 3) {
-            String[] osobeUloge = atributi[3].split("\\s*,\\s*");
-            osobe = Stream.of(osobeUloge)
-                    .map(osobaUloga -> osobaUloga.split("\\s*-\\s*"))
-                    .map(this::dodjeliOsobiUlogu)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
+            throw new IllegalArgumentException("Neispravan zapis u datoteci emisija, nedovoljno atributa: " + redDatotekeEmisije);
         }
     }
 
@@ -73,6 +59,21 @@ public class Emisija implements Prototype {
 
     public List<Osoba> getOsobe() {
         return osobe;
+    }
+
+    private void popuniAtribute(String[] atributi) {
+        id = Integer.parseInt(atributi[0]);
+        nazivEmisije = atributi[1];
+        trajanje = Long.parseLong(atributi[2]);
+        if (atributi.length > 3) {
+            String[] osobeUloge = atributi[3].split("\\s*,\\s*");
+            osobe = Stream.of(osobeUloge)
+                    .map(osobaUloga -> osobaUloga.split("\\s*-\\s*"))
+                    .map(this::dodjeliOsobiUlogu)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+        }
     }
 
     private Optional<Osoba> dodjeliOsobiUlogu(String[] osobaUloga) throws IllegalArgumentException {

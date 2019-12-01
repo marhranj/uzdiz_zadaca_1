@@ -15,34 +15,18 @@ public class Program {
     private String nazivDatotekeRasporeda;
     private Raspored raspored;
 
-    public Program(String redDatotekePrograma) {
-        IllegalArgumentException exception = new IllegalArgumentException("Neispravan zapis u datoteci programa: " + redDatotekePrograma);
-        String[] atributi = redDatotekePrograma.split("\\s*;\\s*");
+    public Program(String redDatotekeTvKuca) {
+        String[] atributi = redDatotekeTvKuca.split("\\s*;\\s*");
         if (atributi.length > 4) {
             try {
                 popuniAtribute(atributi);
                 raspored = new Raspored(pocetak, kraj, new UpravljacDatotekama().procitajDatoteku(nazivDatotekeRasporeda));
             } catch (IllegalArgumentException | DateTimeParseException | IOException e) {
-                throw exception;
+                throw new IllegalArgumentException("Neispravan zapis u datoteci tv kuce: " + redDatotekeTvKuca, e);
             }
         } else {
-            throw exception;
+            throw new IllegalArgumentException("Neispravan zapis u datoteci tv kuce, nedovoljno atributa: " + redDatotekeTvKuca);
         }
-    }
-
-    private void popuniAtribute(String[] atributi) {
-        id = Integer.parseInt(atributi[0]);
-        naziv = atributi[1];
-        pocetak = LocalTime.parse(urediVrijeme(atributi[2]));
-        kraj = atributi[3].isEmpty() ? LocalTime.of(0, 0) : LocalTime.parse(urediVrijeme(atributi[3]));
-        nazivDatotekeRasporeda = atributi[4];
-    }
-
-    private String urediVrijeme(String vrijeme) {
-        if (vrijeme.length() == 4) {
-            return "0" + vrijeme;
-        }
-        return vrijeme;
     }
 
     public Raspored getRaspored() {
@@ -67,6 +51,21 @@ public class Program {
 
     public String getNazivDatotekeRasporeda() {
         return nazivDatotekeRasporeda;
+    }
+
+    private void popuniAtribute(String[] atributi) {
+        id = Integer.parseInt(atributi[0]);
+        naziv = atributi[1];
+        pocetak = LocalTime.parse(urediVrijeme(atributi[2]));
+        kraj = atributi[3].isEmpty() ? LocalTime.of(0, 0) : LocalTime.parse(urediVrijeme(atributi[3]));
+        nazivDatotekeRasporeda = atributi[4];
+    }
+
+    private String urediVrijeme(String vrijeme) {
+        if (vrijeme.length() == 4) {
+            return "0" + vrijeme;
+        }
+        return vrijeme;
     }
 
 }

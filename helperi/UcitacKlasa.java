@@ -43,7 +43,13 @@ public class UcitacKlasa {
                     try {
                         return klasa.getDeclaredConstructor(String.class).newInstance(zapisDatoteke);
                     } catch (Exception e) {
-                        System.err.println(e.getCause().getLocalizedMessage());
+                        String message;
+                        if (e.getCause().getCause() != null) {
+                            message = e.getCause().getLocalizedMessage() + ": " + e.getCause().getCause();
+                        } else {
+                            message = e.getCause().getLocalizedMessage();
+                        }
+                        System.err.println(message);
                         return null;
                     }
                 })

@@ -6,17 +6,16 @@ public class Uloga {
     private String nazivUloge;
 
     public Uloga(String redDatotekeUloga) throws IllegalArgumentException {
-        IllegalArgumentException exception = new IllegalArgumentException("Neispravan zapis u datoteci uloga: " + redDatotekeUloga);
         String[] atributi = redDatotekeUloga.split("\\s*;\\s*");
         if (atributi.length > 1) {
             try {
                 id = Integer.parseInt(atributi[0]);
                 nazivUloge = atributi[1];
             } catch (NumberFormatException e) {
-                throw exception;
+                throw new IllegalArgumentException("Neispravan zapis u datoteci uloga: " + redDatotekeUloga, e);
             }
         } else {
-            throw exception;
+            throw new IllegalArgumentException("Neispravan zapis u datoteci uloga: " + redDatotekeUloga);
         }
     }
 

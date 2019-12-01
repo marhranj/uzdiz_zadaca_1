@@ -17,17 +17,16 @@ public class Osoba implements Prototype {
     }
 
     public Osoba(String redDatotekeUloga) throws IllegalArgumentException {
-        IllegalArgumentException exception = new IllegalArgumentException("Neispravan zapis u datoteci osoba: " + redDatotekeUloga);
         String[] atributi = redDatotekeUloga.split("\\s*;\\s*");
         if (atributi.length > 1) {
             try {
                 id = Integer.parseInt(atributi[0]);
                 imePrezime = atributi[1];
             } catch (NumberFormatException e) {
-                throw exception;
+                throw  new IllegalArgumentException("Neispravan zapis u datoteci osoba: " + redDatotekeUloga, e);
             }
         } else {
-            throw exception;
+            throw  new IllegalArgumentException("Neispravan zapis u datoteci osoba, nedovoljno atributa: " + redDatotekeUloga);
         }
     }
 
