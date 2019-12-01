@@ -1,4 +1,4 @@
-package marhranj_zadaca_1;
+package marhranj_zadaca_1.helperi;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,6 +12,9 @@ public class UpravljacDatotekama {
     private String datotekaOsobe;
     private String datotekaTvKuca;
     private String datotekaUloge;
+
+    public UpravljacDatotekama() {
+    }
 
     public UpravljacDatotekama(UpravljacArgumentimaKmdLin upravljacArgumentimaKmdLin) {
         this.upravljacArgumentimaKmdLin = upravljacArgumentimaKmdLin;

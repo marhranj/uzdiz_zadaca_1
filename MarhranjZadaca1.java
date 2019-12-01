@@ -1,5 +1,10 @@
 package marhranj_zadaca_1;
 
+import marhranj_zadaca_1.entiteti.TvKuca;
+import marhranj_zadaca_1.helperi.UcitacKlasa;
+import marhranj_zadaca_1.helperi.UpravljacArgumentimaKmdLin;
+import marhranj_zadaca_1.helperi.UpravljacDatotekama;
+
 public class MarhranjZadaca1 {
 
     public static void main(String... args) {
@@ -23,6 +28,7 @@ public class MarhranjZadaca1 {
         tvKuca.setUloge(ucitacKlasa.ucitajUloge());
         tvKuca.setOsobe(ucitacKlasa.ucitajOsobe());
         tvKuca.setEmisije(ucitacKlasa.ucitajEmisije());
+        tvKuca.setProgrami(ucitacKlasa.ucitajPrograme());
     }
 
 }

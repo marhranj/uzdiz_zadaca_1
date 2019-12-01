@@ -1,4 +1,4 @@
-package marhranj_zadaca_1;
+package marhranj_zadaca_1.entiteti;
 
 import java.time.LocalTime;
 import java.util.ArrayList;

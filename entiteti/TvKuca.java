@@ -1,4 +1,4 @@
-package marhranj_zadaca_1;
+package marhranj_zadaca_1.entiteti;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ public class TvKuca {
     private List<Uloga> uloge;
     private List<Osoba> osobe;
     private List<Emisija> emisije;
+    private List<Program> programi;
 
     static {
         instanca = new TvKuca();
@@ -42,6 +43,14 @@ public class TvKuca {
 
     public void setEmisije(List<Emisija> emisije) {
         this.emisije = emisije;
+    }
+
+    public List<Program> getProgrami() {
+        return programi;
+    }
+
+    public void setProgrami(List<Program> programi) {
+        this.programi = programi;
     }
 
 }

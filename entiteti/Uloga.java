@@ -1,4 +1,4 @@
-package marhranj_zadaca_1;
+package marhranj_zadaca_1.entiteti;
 
 public class Uloga {
 
