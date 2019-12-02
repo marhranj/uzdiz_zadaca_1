@@ -22,6 +22,7 @@ public class Raspored {
     public Raspored(LocalTime pocetak, LocalTime kraj, String sadrzajDatotekeRasporeda) {
         this.pocetak = pocetak;
         this.kraj = kraj;
+
         String[] redoviZapisa = sadrzajDatotekeRasporeda.split("\\r?\\n");
         redoviZapisa = Arrays.copyOfRange(redoviZapisa, 1, redoviZapisa.length);
         String[] emisijeSaZadanimPocetkom = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 3);
@@ -73,15 +74,38 @@ public class Raspored {
     }
 
     private String[] dohvatiRedoveZapisaPremaBrojuAtributa(String[] redoviZapisa, int brojAtributa) {
-        Predicate<String> filtrirajPremaBrojuAtributa = redZapisa -> {
+        return Stream.of(redoviZapisa)
+                .filter(filtrirajZapisePremaBrojuAtributa(brojAtributa))
+                .filter(filtrirajZapisePremaIspravnostiAtributa(brojAtributa))
+                .toArray(String[]::new);
+    }
+
+    private Predicate<String> filtrirajZapisePremaBrojuAtributa(int brojAtributa) {
+        return redZapisa -> {
             String[] atributi = redZapisa.split("\\s*;\\s*");
             int duzinaSijecanjaNiza = atributi.length > brojAtributa - 1 ? brojAtributa : atributi.length;
             atributi = Arrays.copyOfRange(atributi, 0, duzinaSijecanjaNiza);
             return atributi.length >= brojAtributa;
         };
-        return Stream.of(redoviZapisa)
-                .filter(filtrirajPremaBrojuAtributa)
-                .toArray(String[]::new);
+    }
+
+    private Predicate<String> filtrirajZapisePremaIspravnostiAtributa(int brojAtributa) {
+        return redZapisa -> {
+            String[] atributi = redZapisa.split("\\s*;\\s*");
+
+            boolean ispravno = true;
+            int temp = brojAtributa - 1;
+            if (temp-- == 2) {
+                ispravno = atributi[2].matches("([01]?[0-9]|2[0-3]):[0-5][0-9]");
+            }
+            if (temp-- == 1) {
+                ispravno = atributi[1].matches("\\b([0-9]|[0-9]-[0-9]|[0-9]*(,[0-9]))\\b");
+            }
+            if (temp == 0) {
+                ispravno = atributi[0].matches("^[0-9]*$");
+            }
+            return ispravno;
+        };
     }
 
     private String[] removeSubArray(String[] array, String[] subArray) {
