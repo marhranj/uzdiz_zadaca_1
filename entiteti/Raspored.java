@@ -7,6 +7,11 @@ import java.util.stream.Stream;
 
 public class Raspored {
 
+    private static final String OSOBA_ULOGA_REGEX = "^([0-9]*-([0-9]+)(,[0-9]*-[0-9]+)*)$";
+    private static final String VRIJEME_REGEX = "^([01]?[0-9]|2[0-3]):[0-5][0-9]$";
+    private static final String DAN_IZVODENJA_REGEX = "^([0-9]*(,[0-9]+)+)|([0-9]*-[0-9]+)|([0-9]*)$";
+    private static final String ID_REGEX = "^[0-9]*$";
+
     private LocalTime pocetak;
     private LocalTime kraj;
 
@@ -94,7 +99,7 @@ public class Raspored {
     private boolean zavrsavaZapisSaOsobomUlogom(String redZapisa) {
         String[] atributi = redZapisa.split("\\s*;\\s*") ;
         return !redZapisa.endsWith(";")
-                && atributi[atributi.length - 1].matches("^([0-9]*-([0-9]+)(,[0-9]*-[0-9]+)*)$");
+                && atributi[atributi.length - 1].matches(OSOBA_ULOGA_REGEX);
     }
 
     private Predicate<String> filtrirajZapisePremaIspravnostiAtributa(int brojPotrebnihAtributa) {
@@ -105,13 +110,13 @@ public class Raspored {
             int brojAtributa = brojPotrebnihAtributa;
 
             if (brojAtributa-- == 3) {
-                ispravno = atributi[2].matches("^([01]?[0-9]|2[0-3]):[0-5][0-9]$");
+                ispravno = atributi[2].matches(VRIJEME_REGEX);
             }
             if (brojAtributa-- == 2) {
-                ispravno = ispravno && atributi[1].matches("^([0-9]*(,[0-9]+)+)|([0-9]*-[0-9]+)|([0-9]*)$");
+                ispravno = ispravno && atributi[1].matches(DAN_IZVODENJA_REGEX);
             }
             if (brojAtributa == 1) {
-                ispravno = ispravno && atributi[0].matches("^[0-9]*$");
+                ispravno = ispravno && atributi[0].matches(ID_REGEX);
             }
             return ispravno;
         };
