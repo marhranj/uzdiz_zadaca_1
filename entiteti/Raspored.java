@@ -3,7 +3,6 @@ package marhranj_zadaca_1.entiteti;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Raspored {
@@ -27,9 +26,12 @@ public class Raspored {
         redoviZapisa = Arrays.copyOfRange(redoviZapisa, 1, redoviZapisa.length);
         String[] emisijeSaZadanimPocetkom = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 3);
         redoviZapisa = removeSubArray(redoviZapisa, emisijeSaZadanimPocetkom);
-        String[] emisijebezZadanogVremena = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 2);
-        redoviZapisa = removeSubArray(redoviZapisa, emisijebezZadanogVremena);
-        String[] emisijebezZadanogDana = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 1);
+        String[] emisijeBezZadanogVremena = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 2);
+        redoviZapisa = removeSubArray(redoviZapisa, emisijeBezZadanogVremena);
+        String[] emisijeBezZadanogDana = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 1);
+        if (redoviZapisa.length > 0) {
+            System.err.println("Greske u sljedecim zapisima: " + Arrays.toString(redoviZapisa));
+        }
     }
 
     public Dan getPonedjeljak() {
@@ -61,7 +63,6 @@ public class Raspored {
     }
 
     private Dan dohvatiDanPremaIndexu(int index) {
-        index = index % 7;
         switch (index) {
             case 1: return ponedjeljak;
             case 2: return utorak;
@@ -80,29 +81,37 @@ public class Raspored {
                 .toArray(String[]::new);
     }
 
-    private Predicate<String> filtrirajZapisePremaBrojuAtributa(int brojAtributa) {
+    private Predicate<String> filtrirajZapisePremaBrojuAtributa(int brojPotrebnihAtributa) {
         return redZapisa -> {
-            String[] atributi = redZapisa.split("\\s*;\\s*");
-            int duzinaSijecanjaNiza = atributi.length > brojAtributa - 1 ? brojAtributa : atributi.length;
-            atributi = Arrays.copyOfRange(atributi, 0, duzinaSijecanjaNiza);
-            return atributi.length >= brojAtributa;
+            String[] atributi = redZapisa.split("\\s*;\\s*") ;
+            int brojAtributa = zavrsavaZapisSaOsobomUlogom(redZapisa)
+                    ? brojPotrebnihAtributa + 1
+                    : brojPotrebnihAtributa ;
+            return atributi.length == brojAtributa;
         };
     }
 
-    private Predicate<String> filtrirajZapisePremaIspravnostiAtributa(int brojAtributa) {
+    private boolean zavrsavaZapisSaOsobomUlogom(String redZapisa) {
+        String[] atributi = redZapisa.split("\\s*;\\s*") ;
+        return !redZapisa.endsWith(";")
+                && atributi[atributi.length - 1].matches("^([0-9]*-([0-9]+)(,[0-9]*-[0-9]+)*)$");
+    }
+
+    private Predicate<String> filtrirajZapisePremaIspravnostiAtributa(int brojPotrebnihAtributa) {
         return redZapisa -> {
             String[] atributi = redZapisa.split("\\s*;\\s*");
 
             boolean ispravno = true;
-            int temp = brojAtributa - 1;
-            if (temp-- == 2) {
-                ispravno = atributi[2].matches("([01]?[0-9]|2[0-3]):[0-5][0-9]");
+            int brojAtributa = brojPotrebnihAtributa;
+
+            if (brojAtributa-- == 3) {
+                ispravno = atributi[2].matches("^([01]?[0-9]|2[0-3]):[0-5][0-9]$");
             }
-            if (temp-- == 1) {
-                ispravno = atributi[1].matches("\\b([0-9]|[0-9]-[0-9]|[0-9]*(,[0-9]))\\b");
+            if (brojAtributa-- == 2) {
+                ispravno = ispravno && atributi[1].matches("^([0-9]*(,[0-9]+)+)|([0-9]*-[0-9]+)|([0-9]*)$");
             }
-            if (temp == 0) {
-                ispravno = atributi[0].matches("^[0-9]*$");
+            if (brojAtributa == 1) {
+                ispravno = ispravno && atributi[0].matches("^[0-9]*$");
             }
             return ispravno;
         };
