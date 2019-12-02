@@ -1,6 +1,10 @@
 package marhranj_zadaca_1.entiteti;
 
 import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Raspored {
 
@@ -18,7 +22,13 @@ public class Raspored {
     public Raspored(LocalTime pocetak, LocalTime kraj, String sadrzajDatotekeRasporeda) {
         this.pocetak = pocetak;
         this.kraj = kraj;
-
+        String[] redoviZapisa = sadrzajDatotekeRasporeda.split("\\r?\\n");
+        redoviZapisa = Arrays.copyOfRange(redoviZapisa, 1, redoviZapisa.length);
+        String[] emisijeSaZadanimPocetkom = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 3);
+        redoviZapisa = removeSubArray(redoviZapisa, emisijeSaZadanimPocetkom);
+        String[] emisijebezZadanogVremena = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 2);
+        redoviZapisa = removeSubArray(redoviZapisa, emisijebezZadanogVremena);
+        String[] emisijebezZadanogDana = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 1);
     }
 
     public Dan getPonedjeljak() {
@@ -60,6 +70,24 @@ public class Raspored {
             case 6: return subota;
             default: return nedjelja;
         }
+    }
+
+    private String[] dohvatiRedoveZapisaPremaBrojuAtributa(String[] redoviZapisa, int brojAtributa) {
+        Predicate<String> filtrirajPremaBrojuAtributa = redZapisa -> {
+            String[] atributi = redZapisa.split("\\s*;\\s*");
+            int duzinaSijecanjaNiza = atributi.length > brojAtributa - 1 ? brojAtributa : atributi.length;
+            atributi = Arrays.copyOfRange(atributi, 0, duzinaSijecanjaNiza);
+            return atributi.length >= brojAtributa;
+        };
+        return Stream.of(redoviZapisa)
+                .filter(filtrirajPremaBrojuAtributa)
+                .toArray(String[]::new);
+    }
+
+    private String[] removeSubArray(String[] array, String[] subArray) {
+        return Stream.of(array)
+                .filter(elem -> !Arrays.asList(subArray).contains(elem))
+                .toArray(String[]::new);
     }
 
 }

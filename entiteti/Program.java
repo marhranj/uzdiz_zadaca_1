@@ -57,7 +57,7 @@ public class Program {
         id = Integer.parseInt(atributi[0]);
         naziv = atributi[1];
         pocetak = LocalTime.parse(urediVrijeme(atributi[2]));
-        kraj = atributi[3].isEmpty() ? LocalTime.of(0, 0) : LocalTime.parse(urediVrijeme(atributi[3]));
+        kraj = atributi[3].isEmpty() ? LocalTime.of(23, 59) : LocalTime.parse(urediVrijeme(atributi[3]));
         nazivDatotekeRasporeda = atributi[4];
     }
 
