@@ -1,6 +1,6 @@
 package marhranj_zadaca_1.entiteti;
 
-import marhranj_zadaca_1.helperi.DohvacanjePremaId;
+import marhranj_zadaca_1.helperi.DohvacanjeEntiteta;
 import marhranj_zadaca_1.sucelja.Prototype;
 
 import java.util.ArrayList;
@@ -85,8 +85,8 @@ public class Emisija implements Prototype {
 
     private Optional<Osoba> dodjeliOsobiUlogu(String[] osobaUloga) throws IllegalArgumentException {
         if (osobaUloga.length > 1) {
-            Optional<Osoba> osoba = DohvacanjePremaId.dohvatiOsobuPremaId(Integer.parseInt(osobaUloga[0]));
-            Optional<Uloga> uloga = DohvacanjePremaId.dohvatiUloguPremaId(Integer.parseInt(osobaUloga[1]));
+            Optional<Osoba> osoba = DohvacanjeEntiteta.dohvatiOsobuPremaId(Integer.parseInt(osobaUloga[0]));
+            Optional<Uloga> uloga = DohvacanjeEntiteta.dohvatiUloguPremaId(Integer.parseInt(osobaUloga[1]));
             osoba.ifPresent(osoba1 -> uloga.ifPresent(osoba1::setUloga));
             return osoba;
         } else {

@@ -7,9 +7,9 @@ import marhranj_zadaca_1.entiteti.Uloga;
 
 import java.util.Optional;
 
-public final class DohvacanjePremaId {
+public final class DohvacanjeEntiteta {
 
-    private DohvacanjePremaId() {}
+    private DohvacanjeEntiteta() {}
 
     public static Optional<Osoba> dohvatiOsobuPremaId(int idOsobe) {
         return TvKuca.dajInstancu().getOsobe()

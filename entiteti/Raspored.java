@@ -1,6 +1,6 @@
 package marhranj_zadaca_1.entiteti;
 
-import marhranj_zadaca_1.helperi.DohvacanjePremaId;
+import marhranj_zadaca_1.helperi.DohvacanjeEntiteta;
 import marhranj_zadaca_1.helperi.PretvaranjeVremena;
 
 import java.time.LocalTime;
@@ -33,12 +33,14 @@ public class Raspored {
         String[] emisijeBezZadanogPocetka = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 2);
         redoviZapisa = removeSubArray(redoviZapisa, emisijeBezZadanogPocetka);
         String[] emisijeBezZadanogDana = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 1);
-        if (redoviZapisa.length > 0) {
-            System.err.println("Greske u sljedecim zapisima programa: " + Arrays.toString(redoviZapisa));
-        }
 
         popuniRasporedEmisijamaSaZadanimPocetkom(emisijeSaZadanimPocetkom);
         popuniRasporedEmisijamaBezZadanogPocetka(emisijeBezZadanogPocetka);
+        popuniRasporedEmisijamaBezZadanogDana(emisijeBezZadanogDana);
+
+        if (redoviZapisa.length > 0) {
+            System.err.println("Greske u sljedecim zapisima programa: " + Arrays.toString(redoviZapisa));
+        }
     }
 
     public Dan getPonedjeljak() {
@@ -70,13 +72,13 @@ public class Raspored {
     }
 
     private void inicijalizirajDane(LocalTime pocetak, LocalTime kraj) {
-        this.ponedjeljak = new Dan(pocetak, kraj);
-        this.utorak = new Dan(pocetak, kraj);
-        this.srijeda = new Dan(pocetak, kraj);
-        this.cetvrtak = new Dan(pocetak, kraj);
-        this.petak = new Dan(pocetak, kraj);
-        this.subota = new Dan(pocetak, kraj);
-        this.nedjelja = new Dan(pocetak, kraj);
+        this.ponedjeljak = new Dan(pocetak, kraj, "Ponedjeljak");
+        this.utorak = new Dan(pocetak, kraj, "Utorak");
+        this.srijeda = new Dan(pocetak, kraj, "Srijeda");
+        this.cetvrtak = new Dan(pocetak, kraj, "Cetvrtak");
+        this.petak = new Dan(pocetak, kraj, "Petak");
+        this.subota = new Dan(pocetak, kraj, "Subota");
+        this.nedjelja = new Dan(pocetak, kraj, "Nedjelja");
     }
 
     private void popuniRasporedEmisijamaSaZadanimPocetkom(String[] emisijeSaZadanimPocetkom) {
@@ -89,6 +91,11 @@ public class Raspored {
                 .forEach(this::popuniRasporedEmisijomBezZadanogPocetka);
     }
 
+    private void popuniRasporedEmisijamaBezZadanogDana(String[] emisijeBezZadanogDana) {
+        Stream.of(emisijeBezZadanogDana)
+                .forEach(this::popuniRasporedEmisijomBezZadanogDana);
+    }
+
     private void popuniRasporedSaEmisijomSaZadanimPocetkom(String emisijaSaZadanimPocetkom) {
         String[] atributi = emisijaSaZadanimPocetkom.split("\\s*;\\s*");
 
@@ -97,7 +104,7 @@ public class Raspored {
         LocalTime pocetakEmisije = LocalTime.parse(PretvaranjeVremena.postaviFormatVremena(atributi[2]));
         String[] osobeUloge = atributi.length > 3 ? atributi[3].split("\\s*,\\s*") : new String[] {};
 
-        DohvacanjePremaId.dohvatiEmisijuPremaId(idEmisije).ifPresent(emisija -> {
+        DohvacanjeEntiteta.dohvatiEmisijuPremaId(idEmisije).ifPresent(emisija -> {
             emisija.dodajUlogeOsobama(osobeUloge);
             dodajEmisijuDanima(dani, pocetakEmisije, emisija);
         });
@@ -110,9 +117,24 @@ public class Raspored {
         String dani = atributi[1];
         String[] osobeUloge = atributi.length > 2 ? atributi[2].split("\\s*,\\s*") : new String[] {};
 
-        DohvacanjePremaId.dohvatiEmisijuPremaId(idEmisije).ifPresent(emisija -> {
+        DohvacanjeEntiteta.dohvatiEmisijuPremaId(idEmisije).ifPresent(emisija -> {
             emisija.dodajUlogeOsobama(osobeUloge);
             dodajEmisijuDanima(dani, null, emisija);
+        });
+    }
+
+    private void popuniRasporedEmisijomBezZadanogDana(String emisijaBezZadanogDana) {
+        String[] atributi = emisijaBezZadanogDana.split("\\s*;\\s*");
+
+        int idEmisije = Integer.parseInt(atributi[0]);
+        String[] osobeUloge = atributi.length > 1 ? atributi[1].split("\\s*,\\s*") : new String[] {};
+
+        DohvacanjeEntiteta.dohvatiEmisijuPremaId(idEmisije).ifPresent(emisija -> {
+            emisija.dodajUlogeOsobama(osobeUloge);
+            int i = 1;
+            while (i <= 7 && !dodajEmisijuDanu(null, emisija, i)) {
+                i++;
+            }
         });
     }
 
@@ -132,17 +154,19 @@ public class Raspored {
         }
     }
 
-    private void dodajEmisijuDanu(LocalTime pocetakEmisije, Emisija emisija, int indexDana) {
+    private boolean dodajEmisijuDanu(LocalTime pocetakEmisije, Emisija emisija, int indexDana) {
+        boolean uspjesnoDodano = false;
         Dan dan = dohvatiDanPremaIndexu(indexDana);
         if (dan != null) {
             if (pocetakEmisije != null) {
-                dan.dodajEmisiju(pocetakEmisije, emisija);
+                uspjesnoDodano = dan.dodajEmisiju(pocetakEmisije, emisija);
             } else {
-                dan.dodajEmisiju(emisija);
+                uspjesnoDodano = dan.dodajEmisiju(emisija);
             }
         } else {
             System.err.println("Ne postoji dan sa indexom: " + indexDana + " u datoteci programa");
         }
+        return uspjesnoDodano;
     }
 
     private boolean nizDanova(String dan) {
