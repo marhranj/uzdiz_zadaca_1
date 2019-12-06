@@ -2,6 +2,7 @@ package marhranj_zadaca_1.entiteti;
 
 import marhranj_zadaca_1.sucelja.Prototype;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,14 +13,14 @@ public class Emisija implements Prototype {
     private int id;
     private String nazivEmisije;
     private long trajanje;
-    private List<Osoba> osobe;
+    private List<Osoba> osobe = new ArrayList<>();
 
     public Emisija(Emisija emisija) {
         if (emisija != null) {
             this.id = emisija.id;
             this.nazivEmisije = emisija.nazivEmisije;
             this.trajanje = emisija.trajanje;
-            this.osobe = emisija.osobe;
+            this.osobe = new ArrayList<>(emisija.osobe);
         }
     }
 
@@ -67,13 +68,17 @@ public class Emisija implements Prototype {
         trajanje = Long.parseLong(atributi[2]);
         if (atributi.length > 3) {
             String[] osobeUloge = atributi[3].split("\\s*,\\s*");
-            osobe = Stream.of(osobeUloge)
-                    .map(osobaUloga -> osobaUloga.split("\\s*-\\s*"))
-                    .map(this::dodjeliOsobiUlogu)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
+            dodajOsobeUloge(osobeUloge);
         }
+    }
+
+    public void dodajOsobeUloge(String[] osobeUloge) {
+        osobe.addAll(Stream.of(osobeUloge)
+                .map(osobaUloga -> osobaUloga.split("\\s*-\\s*"))
+                .map(this::dodjeliOsobiUlogu)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList()));
     }
 
     private Optional<Osoba> dodjeliOsobiUlogu(String[] osobaUloga) throws IllegalArgumentException {

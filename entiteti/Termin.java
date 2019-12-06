@@ -2,7 +2,7 @@ package marhranj_zadaca_1.entiteti;
 
 import java.time.LocalTime;
 
-public class Termin {
+public class Termin implements Comparable<Termin> {
 
     private LocalTime pocetak;
     private LocalTime kraj;
@@ -24,6 +24,11 @@ public class Termin {
 
     public Emisija getEmisija() {
         return emisija;
+    }
+
+    @Override
+    public int compareTo(Termin termin) {
+        return this.pocetak.compareTo(termin.getPocetak());
     }
 
 }
