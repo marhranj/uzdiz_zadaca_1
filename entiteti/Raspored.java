@@ -1,8 +1,10 @@
 package marhranj_zadaca_1.entiteti;
 
+import marhranj_zadaca_1.helperi.DohvacanjePremaId;
+import marhranj_zadaca_1.helperi.PretvaranjeVremena;
+
 import java.time.LocalTime;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -13,33 +15,30 @@ public class Raspored {
     private static final String DAN_IZVODENJA_REGEX = "^([0-9]*(,[0-9]+)+)|([0-9]*-[0-9]+)|([0-9]*)$";
     private static final String ID_REGEX = "^[0-9]*$";
 
-    private LocalTime pocetak;
-    private LocalTime kraj;
-
-    private Dan ponedjeljak = new Dan();
-    private Dan utorak = new Dan();
-    private Dan srijeda = new Dan();
-    private Dan cetvrtak = new Dan();
-    private Dan petak = new Dan();
-    private Dan subota = new Dan();
-    private Dan nedjelja = new Dan();
+    private Dan ponedjeljak;
+    private Dan utorak;
+    private Dan srijeda;
+    private Dan cetvrtak;
+    private Dan petak;
+    private Dan subota;
+    private Dan nedjelja;
 
     public Raspored(LocalTime pocetak, LocalTime kraj, String sadrzajDatotekeRasporeda) {
-        this.pocetak = pocetak;
-        this.kraj = kraj;
+        inicijalizirajDane(pocetak, kraj);
 
         String[] redoviZapisa = sadrzajDatotekeRasporeda.split("\\r?\\n");
         redoviZapisa = Arrays.copyOfRange(redoviZapisa, 1, redoviZapisa.length);
         String[] emisijeSaZadanimPocetkom = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 3);
         redoviZapisa = removeSubArray(redoviZapisa, emisijeSaZadanimPocetkom);
-        String[] emisijeBezZadanogVremena = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 2);
-        redoviZapisa = removeSubArray(redoviZapisa, emisijeBezZadanogVremena);
+        String[] emisijeBezZadanogPocetka = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 2);
+        redoviZapisa = removeSubArray(redoviZapisa, emisijeBezZadanogPocetka);
         String[] emisijeBezZadanogDana = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 1);
         if (redoviZapisa.length > 0) {
             System.err.println("Greske u sljedecim zapisima programa: " + Arrays.toString(redoviZapisa));
         }
 
         popuniRasporedEmisijamaSaZadanimPocetkom(emisijeSaZadanimPocetkom);
+        popuniRasporedEmisijamaBezZadanogPocetka(emisijeBezZadanogPocetka);
     }
 
     public Dan getPonedjeljak() {
@@ -70,45 +69,80 @@ public class Raspored {
         return nedjelja;
     }
 
+    private void inicijalizirajDane(LocalTime pocetak, LocalTime kraj) {
+        this.ponedjeljak = new Dan(pocetak, kraj);
+        this.utorak = new Dan(pocetak, kraj);
+        this.srijeda = new Dan(pocetak, kraj);
+        this.cetvrtak = new Dan(pocetak, kraj);
+        this.petak = new Dan(pocetak, kraj);
+        this.subota = new Dan(pocetak, kraj);
+        this.nedjelja = new Dan(pocetak, kraj);
+    }
+
     private void popuniRasporedEmisijamaSaZadanimPocetkom(String[] emisijeSaZadanimPocetkom) {
         Stream.of(emisijeSaZadanimPocetkom)
-                .forEach(emisijaSaZadanimPocetkom -> {
-                    String[] atributi = emisijaSaZadanimPocetkom.split("\\s*;\\s*");
-                    int idEmisije = Integer.parseInt(atributi[0]);
-                    String dani = atributi[1];
-                    LocalTime pocetakEmisije = LocalTime.parse(urediVrijeme(atributi[2]));
-                    String[] osobeUloge = atributi.length > 3 ? atributi[3].split("\\s*,\\s*") : new String[] {};
-                    Optional<Emisija> emisija = TvKuca.dajInstancu().getEmisije()
-                            .stream()
-                            .filter(emisija1 -> emisija1.getId() == idEmisije)
-                            .findFirst()
-                            .map(emisija1 -> (Emisija) emisija1.clone());
-                    emisija.ifPresent(emisija1 -> {
-                        if (unutarVremena(pocetakEmisije, emisija1)) {
-                            emisija1.dodajOsobeUloge(osobeUloge);
-                            if (nizDanova(dani)) {
-                                int prviDan = Character.getNumericValue(dani.charAt(0));
-                                int zadnjiDan = Character.getNumericValue(dani.charAt(2));
-                                for (int i = prviDan; i <= zadnjiDan; i++) {
-                                    Dan dan = dohvatiDanPremaIndexu(i);
-                                    dan.dodajEmisiju(pocetakEmisije, emisija.get());
-                                }
-                            }
-                        }
-                    });
-                });
+                .forEach(this::popuniRasporedSaEmisijomSaZadanimPocetkom);
     }
 
-    private String urediVrijeme(String vrijeme) {
-        if (vrijeme.length() == 4) {
-            return "0" + vrijeme;
+    private void popuniRasporedEmisijamaBezZadanogPocetka(String[] emisijeBezZadanogPocetka) {
+        Stream.of(emisijeBezZadanogPocetka)
+                .forEach(this::popuniRasporedEmisijomBezZadanogPocetka);
+    }
+
+    private void popuniRasporedSaEmisijomSaZadanimPocetkom(String emisijaSaZadanimPocetkom) {
+        String[] atributi = emisijaSaZadanimPocetkom.split("\\s*;\\s*");
+
+        int idEmisije = Integer.parseInt(atributi[0]);
+        String dani = atributi[1];
+        LocalTime pocetakEmisije = LocalTime.parse(PretvaranjeVremena.postaviFormatVremena(atributi[2]));
+        String[] osobeUloge = atributi.length > 3 ? atributi[3].split("\\s*,\\s*") : new String[] {};
+
+        DohvacanjePremaId.dohvatiEmisijuPremaId(idEmisije).ifPresent(emisija -> {
+            emisija.dodajUlogeOsobama(osobeUloge);
+            dodajEmisijuDanima(dani, pocetakEmisije, emisija);
+        });
+    }
+
+    private void popuniRasporedEmisijomBezZadanogPocetka(String emisijaBezZadanogPocetka) {
+        String[] atributi = emisijaBezZadanogPocetka.split("\\s*;\\s*");
+
+        int idEmisije = Integer.parseInt(atributi[0]);
+        String dani = atributi[1];
+        String[] osobeUloge = atributi.length > 2 ? atributi[2].split("\\s*,\\s*") : new String[] {};
+
+        DohvacanjePremaId.dohvatiEmisijuPremaId(idEmisije).ifPresent(emisija -> {
+            emisija.dodajUlogeOsobama(osobeUloge);
+            dodajEmisijuDanima(dani, null, emisija);
+        });
+    }
+
+    private void dodajEmisijuDanima(String dani, LocalTime pocetakEmisije, Emisija emisija) {
+        if (nizDanova(dani)) {
+            int prviDan = Character.getNumericValue(dani.charAt(0));
+            int zadnjiDan = Character.getNumericValue(dani.charAt(2));
+            for (int i = prviDan; i <= zadnjiDan; i++) {
+                dodajEmisijuDanu(pocetakEmisije, emisija, i);
+            }
+        } else if (nabrajanjeDanova(dani)) {
+            String[] nabrajaniDani = dani.split("\\s*,\\s*");
+            Stream.of(nabrajaniDani)
+                    .forEach(indexDana -> dodajEmisijuDanu(pocetakEmisije, emisija, Integer.parseInt(indexDana)));
+        } else {
+            dodajEmisijuDanu(pocetakEmisije, emisija, Integer.parseInt(dani));
         }
-        return vrijeme;
     }
 
-    private boolean unutarVremena(LocalTime pocetak, Emisija emisija) {
-        return pocetak.isAfter(this.pocetak)
-                && pocetak.plusMinutes(emisija.getTrajanje()).isBefore(this.kraj);
+    private void dodajEmisijuDanu(LocalTime pocetakEmisije, Emisija emisija, int indexDana) {
+        Dan dan = dohvatiDanPremaIndexu(indexDana);
+        if (dan != null) {
+            if (pocetakEmisije != null) {
+                dan.dodajEmisiju(pocetakEmisije, emisija);
+            } else {
+                dan.dodajEmisiju(emisija);
+            }
+        } else {
+            System.err.println("Ne postoji dan sa indexom: " + indexDana + " u datoteci programa");
+        }
     }
 
     private boolean nizDanova(String dan) {
@@ -127,7 +161,8 @@ public class Raspored {
             case 4: return cetvrtak;
             case 5: return petak;
             case 6: return subota;
-            default: return nedjelja;
+            case 7: return nedjelja;
+            default: return null;
         }
     }
 

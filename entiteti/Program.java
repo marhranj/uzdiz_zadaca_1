@@ -1,5 +1,6 @@
 package marhranj_zadaca_1.entiteti;
 
+import marhranj_zadaca_1.helperi.PretvaranjeVremena;
 import marhranj_zadaca_1.helperi.UpravljacDatotekama;
 
 import java.io.IOException;
@@ -56,16 +57,11 @@ public class Program {
     private void popuniAtribute(String[] atributi) {
         id = Integer.parseInt(atributi[0]);
         naziv = atributi[1];
-        pocetak = LocalTime.parse(urediVrijeme(atributi[2]));
-        kraj = atributi[3].isEmpty() ? LocalTime.of(23, 59) : LocalTime.parse(urediVrijeme(atributi[3]));
+        pocetak = LocalTime.parse(PretvaranjeVremena.postaviFormatVremena(atributi[2]));
+        kraj = atributi[3].isEmpty()
+                ? LocalTime.of(23, 59)
+                : LocalTime.parse(PretvaranjeVremena.postaviFormatVremena(atributi[3]));
         nazivDatotekeRasporeda = atributi[4];
-    }
-
-    private String urediVrijeme(String vrijeme) {
-        if (vrijeme.length() == 4) {
-            return "0" + vrijeme;
-        }
-        return vrijeme;
     }
 
 }

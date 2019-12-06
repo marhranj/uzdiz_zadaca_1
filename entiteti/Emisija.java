@@ -1,5 +1,6 @@
 package marhranj_zadaca_1.entiteti;
 
+import marhranj_zadaca_1.helperi.DohvacanjePremaId;
 import marhranj_zadaca_1.sucelja.Prototype;
 
 import java.util.ArrayList;
@@ -68,43 +69,29 @@ public class Emisija implements Prototype {
         trajanje = Long.parseLong(atributi[2]);
         if (atributi.length > 3) {
             String[] osobeUloge = atributi[3].split("\\s*,\\s*");
-            dodajOsobeUloge(osobeUloge);
+            dodajUlogeOsobama(osobeUloge);
         }
     }
 
-    public void dodajOsobeUloge(String[] osobeUloge) {
-        osobe.addAll(Stream.of(osobeUloge)
+    public void dodajUlogeOsobama(String[] osobeUloge) {
+        List<Osoba> osobeSaNovimUlogama = Stream.of(osobeUloge)
                 .map(osobaUloga -> osobaUloga.split("\\s*-\\s*"))
                 .map(this::dodjeliOsobiUlogu)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
+        osobe.addAll(osobeSaNovimUlogama);
     }
 
     private Optional<Osoba> dodjeliOsobiUlogu(String[] osobaUloga) throws IllegalArgumentException {
         if (osobaUloga.length > 1) {
-            Optional<Osoba> osoba = dohvatiOsobuPremaId(Integer.parseInt(osobaUloga[0]));
-            Optional<Uloga> uloga = dohvatiUloguPremaId(Integer.parseInt(osobaUloga[1]));
+            Optional<Osoba> osoba = DohvacanjePremaId.dohvatiOsobuPremaId(Integer.parseInt(osobaUloga[0]));
+            Optional<Uloga> uloga = DohvacanjePremaId.dohvatiUloguPremaId(Integer.parseInt(osobaUloga[1]));
             osoba.ifPresent(osoba1 -> uloga.ifPresent(osoba1::setUloga));
             return osoba;
         } else {
             throw new IllegalArgumentException();
         }
-    }
-
-    private Optional<Osoba> dohvatiOsobuPremaId(int idOsobe) {
-        return TvKuca.dajInstancu().getOsobe()
-                .stream()
-                .filter(osoba -> osoba.getId() == idOsobe)
-                .findFirst()
-                .map(osoba -> (Osoba) osoba.clone());
-    }
-
-    private Optional<Uloga> dohvatiUloguPremaId(int idUloge) {
-        return TvKuca.dajInstancu().getUloge()
-                .stream()
-                .filter(uloga -> uloga.getId() == idUloge)
-                .findFirst();
     }
 
 }
