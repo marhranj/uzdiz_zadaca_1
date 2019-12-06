@@ -8,15 +8,15 @@ import java.util.function.Predicate;
 
 public class Dan {
 
-    private LocalTime pocetak;
-    private LocalTime kraj;
+    private LocalTime pocetakEmitiranja;
+    private LocalTime krajEmitiranja;
     private String naziv;
 
     private List<Termin> termini = new ArrayList<>();
 
-    public Dan(LocalTime pocetak, LocalTime kraj, String naziv) {
-        this.pocetak = pocetak;
-        this.kraj = kraj;
+    public Dan(LocalTime pocetakEmitiranja, LocalTime krajEmitiranja, String naziv) {
+        this.pocetakEmitiranja = pocetakEmitiranja;
+        this.krajEmitiranja = krajEmitiranja;
         this.naziv = naziv;
     }
 
@@ -26,7 +26,8 @@ public class Dan {
 
     public boolean dodajEmisiju(LocalTime pocetak, Emisija emisija) {
         boolean uspjesnoDodano = false;
-        if (!zauzetTermin(pocetak, pocetak.plusMinutes(emisija.getTrajanje())) && unutarVremena(pocetak, emisija)) {
+        LocalTime kraj = pocetak.plusMinutes(emisija.getTrajanje());
+        if (!zauzetTermin(pocetak, kraj) && unutarVremenaEmitiranjaPrograma(pocetak, kraj)) {
             termini.add(new Termin(pocetak, pocetak.plusMinutes(emisija.getTrajanje()), emisija));
             Collections.sort(termini);
             uspjesnoDodano = true;
@@ -39,7 +40,8 @@ public class Dan {
     public boolean dodajEmisiju(Emisija emisija) {
         boolean uspjesnoDodano = false;
         LocalTime pocetak = pronadjiSlobodnoVrijeme(emisija);
-        if (prijeKrajaEmitiranjaDana(pocetak.plusMinutes(emisija.getTrajanje()))) {
+        LocalTime kraj = pocetak.plusMinutes(emisija.getTrajanje());
+        if (unutarVremenaEmitiranjaPrograma(pocetak, kraj)) {
             termini.add(new Termin(pocetak, pocetak.plusMinutes(emisija.getTrajanje()), emisija));
             Collections.sort(termini);
             uspjesnoDodano = true;
@@ -50,18 +52,14 @@ public class Dan {
     }
 
     private LocalTime pronadjiSlobodnoVrijeme(Emisija emisija) {
-        LocalTime pocetakEmisije = this.pocetak;
+        LocalTime pocetakEmisije = this.pocetakEmitiranja;
         LocalTime krajEmisije = pocetakEmisije.plusMinutes(emisija.getTrajanje());
         int i = 0;
-        while (zauzetTermin(pocetakEmisije, krajEmisije) && prijeKrajaEmitiranjaDana(krajEmisije)) {
+        while (zauzetTermin(pocetakEmisije, krajEmisije) && unutarVremenaEmitiranjaPrograma(pocetakEmisije, krajEmisije)) {
             pocetakEmisije = termini.get(i++).getKraj();
             krajEmisije = pocetakEmisije.plusMinutes(emisija.getTrajanje());
         }
         return pocetakEmisije;
-    }
-
-    private boolean prijeKrajaEmitiranjaDana(LocalTime vrijeme) {
-        return vrijeme.isBefore(this.kraj) || vrijeme.equals(this.kraj);
     }
 
     private boolean zauzetTermin(LocalTime pocetak, LocalTime kraj) {
@@ -72,9 +70,9 @@ public class Dan {
                 .anyMatch(unutarVremena);
     }
 
-    private boolean unutarVremena(LocalTime pocetak, Emisija emisija) {
-        return pocetak.isAfter(this.pocetak)
-                && pocetak.plusMinutes(emisija.getTrajanje()).isBefore(this.kraj);
+    private boolean unutarVremenaEmitiranjaPrograma(LocalTime pocetak, LocalTime kraj) {
+        return (pocetak.isAfter(this.pocetakEmitiranja) || pocetak.equals(this.pocetakEmitiranja))
+                && (kraj.isBefore(this.krajEmitiranja) || kraj.equals(this.krajEmitiranja));
     }
 
 }
