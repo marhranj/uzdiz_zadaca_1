@@ -61,8 +61,10 @@ public class Dan {
                 .mapToDouble(termin -> Duration.between(termin.getPocetak(), termin.getKraj()).toMinutes())
                 .sum();
         double minuteSlobodnogVremena = minuteEmitiranjaPrograma - minuteEmitiranjaEmisija;
-        String ispis = String.format("%-30s %-30s %-30s %n", "Emitiranje signala (%)", "Emitiranje emisija (%)", "Slobodno vrijeme (%)");
-        ispis += String.format("%-30.2f %-30.2f %-30.2f %n", minuteEmitiranjaSignala/14.40D, minuteEmitiranjaEmisija/14.40D, minuteSlobodnogVremena/14.40D);
+        String ispis = String.format("%-30s %-30s %-30s %n",
+                "Emitiranje signala (%)", "Emitiranje emisija (%)", "Slobodno vrijeme (%)");
+        ispis += String.format("%-30.2f %-30.2f %-30.2f %n",
+                minuteEmitiranjaSignala/14.40D, minuteEmitiranjaEmisija/14.40D, minuteSlobodnogVremena/14.40D);
         return ispis;
     }
 
@@ -70,7 +72,8 @@ public class Dan {
     public String toString() {
         StringBuilder ispis = new StringBuilder(naziv + ":" + System.lineSeparator());
         for (Termin termin : termini) {
-            ispis.append(String.format("%-40s %5s %10s %n", termin.getEmisija().getNazivEmisije(), termin.getPocetak().toString(), termin.getKraj().toString()));
+            ispis.append(String.format("%-40s %5s %10s %n", termin.getEmisija().getNazivEmisije(),
+                    termin.getPocetak().toString(), termin.getKraj().toString()));
         }
         return ispis.toString();
     }
