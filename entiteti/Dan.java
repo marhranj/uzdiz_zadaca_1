@@ -1,5 +1,8 @@
 package marhranj_zadaca_1.entiteti;
 
+import marhranj_zadaca_1.helperi.VremenaUtils;
+
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,8 +23,8 @@ public class Dan {
         this.naziv = naziv;
     }
 
-    public List<Termin> getTermini() {
-        return termini;
+    public String getNaziv() {
+        return naziv;
     }
 
     public boolean dodajEmisiju(LocalTime pocetak, Emisija emisija) {
@@ -51,8 +54,29 @@ public class Dan {
         return uspjesnoDodano;
     }
 
+    public String dohvatiStatistikuZaDan() {
+        double minuteEmitiranjaPrograma = Duration.between(pocetakEmitiranja, krajEmitiranja).toMinutes();
+        double minuteEmitiranjaSignala = 1440L - minuteEmitiranjaPrograma;
+        double minuteEmitiranjaEmisija = termini.stream()
+                .mapToDouble(termin -> Duration.between(termin.getPocetak(), termin.getKraj()).toMinutes())
+                .sum();
+        double minuteSlobodnogVremena = minuteEmitiranjaPrograma - minuteEmitiranjaEmisija;
+        String ispis = String.format("%-30s %-30s %-30s %n", "Emitiranje signala (%)", "Emitiranje emisija (%)", "Slobodno vrijeme (%)");
+        ispis += String.format("%-30.2f %-30.2f %-30.2f %n", minuteEmitiranjaSignala/14.40D, minuteEmitiranjaEmisija/14.40D, minuteSlobodnogVremena/14.40D);
+        return ispis;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder ispis = new StringBuilder(naziv + ":" + System.lineSeparator());
+        for (Termin termin : termini) {
+            ispis.append(String.format("%-40s %5s %10s %n", termin.getEmisija().getNazivEmisije(), termin.getPocetak().toString(), termin.getKraj().toString()));
+        }
+        return ispis.toString();
+    }
+
     private LocalTime pronadjiSlobodnoVrijeme(Emisija emisija) {
-        LocalTime pocetakEmisije = this.pocetakEmitiranja;
+        LocalTime pocetakEmisije = termini.size() > 1 ?  termini.get(0).getKraj() : this.pocetakEmitiranja;
         LocalTime krajEmisije = pocetakEmisije.plusMinutes(emisija.getTrajanje());
         int i = 0;
         while (zauzetTermin(pocetakEmisije, krajEmisije) && unutarVremenaEmitiranjaPrograma(pocetakEmisije, krajEmisije)) {
@@ -64,15 +88,15 @@ public class Dan {
 
     private boolean zauzetTermin(LocalTime pocetak, LocalTime kraj) {
         Predicate<Termin> unutarVremena = termin ->
-                ((pocetak.equals(termin.getPocetak()) || pocetak.isAfter(termin.getPocetak())) && pocetak.isBefore(termin.getKraj())) ||
-                ((kraj.equals(termin.getKraj()) || kraj.isBefore(termin.getKraj())) && kraj.isAfter(termin.getPocetak())) ;
+                (VremenaUtils.prijeIliUIstoVrijeme(termin.getPocetak(), pocetak) && pocetak.isBefore(termin.getKraj())) ||
+                (VremenaUtils.poslijeIliUIstoVrijeme(termin.getKraj(), kraj) && kraj.isAfter(termin.getPocetak()));
         return termini.stream()
                 .anyMatch(unutarVremena);
     }
 
     private boolean unutarVremenaEmitiranjaPrograma(LocalTime pocetak, LocalTime kraj) {
-        return (pocetak.isAfter(this.pocetakEmitiranja) || pocetak.equals(this.pocetakEmitiranja))
-                && (kraj.isBefore(this.krajEmitiranja) || kraj.equals(this.krajEmitiranja));
+        return VremenaUtils.poslijeIliUIstoVrijeme(pocetak, this.pocetakEmitiranja)
+                && VremenaUtils.prijeIliUIstoVrijeme(kraj, this.krajEmitiranja);
     }
 
 }

@@ -1,7 +1,7 @@
 package marhranj_zadaca_1.entiteti;
 
 import marhranj_zadaca_1.helperi.DohvacanjeEntiteta;
-import marhranj_zadaca_1.helperi.PretvaranjeVremena;
+import marhranj_zadaca_1.helperi.VremenaUtils;
 
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -43,32 +43,17 @@ public class Raspored {
         }
     }
 
-    public Dan getPonedjeljak() {
-        return ponedjeljak;
-    }
-
-    public Dan getUtorak() {
-        return utorak;
-    }
-
-    public Dan getSrijeda() {
-        return srijeda;
-    }
-
-    public Dan getCetvrtak() {
-        return cetvrtak;
-    }
-
-    public Dan getPetak() {
-        return petak;
-    }
-
-    public Dan getSubota() {
-        return subota;
-    }
-
-    public Dan getNedjelja() {
-        return nedjelja;
+    public Dan dohvatiDanPremaIndexu(int index) {
+        switch (index) {
+            case 1: return ponedjeljak;
+            case 2: return utorak;
+            case 3: return srijeda;
+            case 4: return cetvrtak;
+            case 5: return petak;
+            case 6: return subota;
+            case 7: return nedjelja;
+            default: return null;
+        }
     }
 
     private void inicijalizirajDane(LocalTime pocetak, LocalTime kraj) {
@@ -101,7 +86,7 @@ public class Raspored {
 
         int idEmisije = Integer.parseInt(atributi[0]);
         String dani = atributi[1];
-        LocalTime pocetakEmisije = LocalTime.parse(PretvaranjeVremena.postaviFormatVremena(atributi[2]));
+        LocalTime pocetakEmisije = LocalTime.parse(VremenaUtils.postaviFormatVremena(atributi[2]));
         String[] osobeUloge = atributi.length > 3 ? atributi[3].split("\\s*,\\s*") : new String[] {};
 
         DohvacanjeEntiteta.dohvatiEmisijuPremaId(idEmisije).ifPresent(emisija -> {
@@ -175,19 +160,6 @@ public class Raspored {
 
     private boolean nabrajanjeDanova(String dan) {
         return dan.matches("[0-9]*(,[0-9]+)+");
-    }
-
-    private Dan dohvatiDanPremaIndexu(int index) {
-        switch (index) {
-            case 1: return ponedjeljak;
-            case 2: return utorak;
-            case 3: return srijeda;
-            case 4: return cetvrtak;
-            case 5: return petak;
-            case 6: return subota;
-            case 7: return nedjelja;
-            default: return null;
-        }
     }
 
     private String[] dohvatiRedoveZapisaPremaBrojuAtributa(String[] redoviZapisa, int brojAtributa) {

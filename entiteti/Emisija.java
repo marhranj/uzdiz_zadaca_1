@@ -43,10 +43,6 @@ public class Emisija implements Prototype {
         return new Emisija(this);
     }
 
-    public void dodajOsobu(Osoba osoba) {
-        osobe.add(osoba);
-    }
-
     public int getId() {
         return id;
     }
