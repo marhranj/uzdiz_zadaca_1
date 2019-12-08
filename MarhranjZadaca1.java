@@ -1,6 +1,5 @@
 package marhranj_zadaca_1;
 
-import marhranj_zadaca_1.entiteti.Dan;
 import marhranj_zadaca_1.entiteti.Program;
 import marhranj_zadaca_1.entiteti.TvKuca;
 import marhranj_zadaca_1.helperi.UcitacKlasa;
