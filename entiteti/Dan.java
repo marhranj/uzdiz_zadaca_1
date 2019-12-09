@@ -93,8 +93,8 @@ public class Dan {
 
     private boolean zauzetTermin(LocalTime pocetak, LocalTime kraj) {
         Predicate<Termin> unutarVremena = termin ->
-                (VremenaUtils.prijeIliUIstoVrijeme(termin.getPocetak(), pocetak) && pocetak.isBefore(termin.getKraj())) ||
-                (VremenaUtils.poslijeIliUIstoVrijeme(termin.getKraj(), kraj) && kraj.isAfter(termin.getPocetak()));
+                VremenaUtils.vremenskiPeriodUnutarDrugogVremenskogPerioda(pocetak, kraj, termin.getPocetak(), termin.getKraj()) ||
+                VremenaUtils.vremenskiPeriodUnutarDrugogVremenskogPerioda(termin.getPocetak(), termin.getKraj(), pocetak, kraj);
         return termini.stream()
                 .anyMatch(unutarVremena);
     }

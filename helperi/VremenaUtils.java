@@ -21,4 +21,20 @@ public final class VremenaUtils {
         return vrijemeZaUsporedbu.equals(vrijemePoslije) || vrijemePoslije.isAfter(vrijemeZaUsporedbu);
     }
 
+    public static boolean vremenskiPeriodUnutarDrugogVremenskogPerioda(LocalTime pocetakVremenskogPerioda1, LocalTime krajVremenskogPerioda1,
+                                                                       LocalTime pocetakVremenskogPerioda2, LocalTime krajVremenskogPerioda2) {
+        return pocetakUnutarVremenskogPerioda(pocetakVremenskogPerioda1, pocetakVremenskogPerioda2, krajVremenskogPerioda2) ||
+                krajUnutarVremenskogPerioda(krajVremenskogPerioda1, pocetakVremenskogPerioda2, krajVremenskogPerioda2);
+    }
+
+    private static boolean pocetakUnutarVremenskogPerioda(LocalTime pocetak, LocalTime pocetakVremenskogPerioda, LocalTime krajVremenskogPerioda) {
+        return poslijeIliUIstoVrijeme(pocetak, pocetakVremenskogPerioda)
+                && pocetak.isBefore(krajVremenskogPerioda);
+    }
+
+    private static boolean krajUnutarVremenskogPerioda(LocalTime kraj, LocalTime pocetakVremenskogPerioda, LocalTime krajVremenskogPerioda) {
+        return prijeIliUIstoVrijeme(kraj, krajVremenskogPerioda)
+                && kraj.isAfter(pocetakVremenskogPerioda);
+    }
+
 }
