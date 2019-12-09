@@ -21,7 +21,7 @@ public class MarhranjZadaca1 {
         }
         UcitacKlasa ucitacKlasa = new UcitacKlasa(upravljacDatotekama);
         postaviZnacajkeTvKuce(ucitacKlasa);
-        new Izbornik().prikaziIzbornik();
+        new Izbornik();
     }
 
     private static void postaviZnacajkeTvKuce(UcitacKlasa ucitacKlasa) {

@@ -10,7 +10,11 @@ import java.util.stream.IntStream;
 
 public class Izbornik {
 
-    public void prikaziIzbornik() {
+    public Izbornik() {
+        prikaziIzbornik();
+    }
+
+    private void prikaziIzbornik() {
         Scanner scanner = new Scanner(System.in);
         List<Program> programi = TvKuca.dajInstancu().getProgrami();
         if (!programi.isEmpty()) {
