@@ -68,8 +68,7 @@ public class Dan {
         return ispis;
     }
 
-    @Override
-    public String toString() {
+    public String dohvatiTermineZaDan() {
         StringBuilder ispis = new StringBuilder(naziv + ":" + System.lineSeparator());
         for (Termin termin : termini) {
             ispis.append(String.format("%-40s %5s %10s %n", termin.getEmisija().getNazivEmisije(),
