@@ -55,7 +55,10 @@ public class Dan {
     }
 
     public String dohvatiStatistikuZaDan() {
-        double minuteEmitiranjaPrograma = Duration.between(pocetakEmitiranja, krajEmitiranja).toMinutes();
+        LocalTime vrijemeZavrsetkaEmitiranja = termini.isEmpty()
+                ? krajEmitiranja
+                : termini.get(termini.size() - 1).getKraj();
+        double minuteEmitiranjaPrograma = Duration.between(pocetakEmitiranja, vrijemeZavrsetkaEmitiranja).toMinutes();
         double minuteEmitiranjaSignala = 1440L - minuteEmitiranjaPrograma;
         double minuteEmitiranjaEmisija = termini.stream()
                 .mapToDouble(termin -> Duration.between(termin.getPocetak(), termin.getKraj()).toMinutes())
