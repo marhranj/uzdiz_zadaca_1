@@ -5,6 +5,7 @@ import marhranj_zadaca_1.helperi.VremenaUtils;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -74,8 +75,12 @@ public class Dan {
     public String dohvatiTermineZaDan() {
         StringBuilder ispis = new StringBuilder(naziv + ":" + System.lineSeparator());
         for (Termin termin : termini) {
-            ispis.append(String.format("%-40s %5s %10s %n", termin.getEmisija().getNazivEmisije(),
-                    termin.getPocetak().toString(), termin.getKraj().toString()));
+            List<Osoba> osobeEmisije = termin.getEmisija().getOsobe();
+            String osobeOutput = osobeEmisije.isEmpty()
+                    ? ""
+                    : Arrays.toString(osobeEmisije.toArray());
+            ispis.append(String.format("%-40s %5s %10s %-40s %n", termin.getEmisija().getNazivEmisije(),
+                    termin.getPocetak().toString(), termin.getKraj().toString(), osobeOutput));
         }
         return ispis.toString();
     }

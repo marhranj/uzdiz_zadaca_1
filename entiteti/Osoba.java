@@ -51,4 +51,9 @@ public class Osoba implements Prototype {
         return new Osoba(this);
     }
 
+    @Override
+    public String toString() {
+        return imePrezime + " - " + uloga.getNazivUloge();
+    }
+
 }
