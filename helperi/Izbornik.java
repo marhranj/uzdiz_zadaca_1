@@ -12,15 +12,20 @@ public class Izbornik {
 
     public void prikaziIzbornik() {
         Scanner scanner = new Scanner(System.in);
-        while (true) {
-            try {
-                System.out.println("Izbornik (za prekid upisite 0): ");
-                Program program = dohvatiOdabraniProgram(scanner, TvKuca.dajInstancu().getProgrami());
-                Dan dan = dohvatiOdabraniDan(scanner, program);
-                prikaziOpcijeZaDan(scanner, dan);
-            } catch (NumberFormatException e){
-                System.err.println("Morate unijeti broj");
+        List<Program> programi = TvKuca.dajInstancu().getProgrami();
+        if (!programi.isEmpty()) {
+            while (true) {
+                try {
+                    System.out.println("Izbornik (za prekid upisite 0): ");
+                    Program program = dohvatiOdabraniProgram(scanner, programi);
+                    Dan dan = dohvatiOdabraniDan(scanner, program);
+                    prikaziOpcijeZaDan(scanner, dan);
+                } catch (NumberFormatException e){
+                    System.err.println("Morate unijeti broj");
+                }
             }
+        } else {
+            System.err.println("Niti jedan program nije inicijaliziran");
         }
     }
 
