@@ -33,6 +33,7 @@ public class Raspored {
         String[] emisijeBezZadanogPocetka = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 2);
         redoviZapisa = removeSubArray(redoviZapisa, emisijeBezZadanogPocetka);
         String[] emisijeBezZadanogDana = dohvatiRedoveZapisaPremaBrojuAtributa(redoviZapisa, 1);
+        redoviZapisa = removeSubArray(redoviZapisa, emisijeBezZadanogDana);
 
         popuniRasporedEmisijamaSaZadanimPocetkom(emisijeSaZadanimPocetkom);
         popuniRasporedEmisijamaBezZadanogPocetka(emisijeBezZadanogPocetka);
@@ -174,7 +175,7 @@ public class Raspored {
             String[] atributi = redZapisa.split("\\s*;\\s*") ;
             int brojAtributa = zavrsavaZapisSaOsobomUlogom(redZapisa)
                     ? brojPotrebnihAtributa + 1
-                    : brojPotrebnihAtributa ;
+                    : brojPotrebnihAtributa;
             return atributi.length == brojAtributa;
         };
     }
