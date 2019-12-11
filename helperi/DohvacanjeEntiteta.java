@@ -30,6 +30,7 @@ public final class DohvacanjeEntiteta {
         return TvKuca.dajInstancu().getEmisije()
                 .stream()
                 .filter(emisija -> emisija.getId() == idEmisije)
+                .map(emisija -> (Emisija) emisija.clone())
                 .findFirst();
     }
 
