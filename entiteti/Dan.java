@@ -105,8 +105,7 @@ public class Dan {
     }
 
     private boolean unutarVremenaEmitiranjaPrograma(LocalTime pocetak, LocalTime kraj) {
-        return VremenaUtils.poslijeIliUIstoVrijeme(pocetak, this.pocetakEmitiranja)
-                && VremenaUtils.prijeIliUIstoVrijeme(kraj, this.krajEmitiranja);
+        return VremenaUtils.vremenskiPeriodUnutarDrugogVremenskogPerioda(pocetak, kraj, this.pocetakEmitiranja, this.krajEmitiranja);
     }
 
 }
